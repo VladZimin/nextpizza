@@ -1,18 +1,24 @@
-import {
-  Container,
-  Filters,
-  ProductGroupList,
-  Title,
-  TopBar,
-} from "@/components/shared";
+import {Container, Filters, ProductGroupList, Title, TopBar,} from '@/components/shared'
+import {prisma} from '@/prisma/prisma-client'
 
-export default function Home() {
+export default async function Home() {
+  const categories = await prisma.category.findMany({
+    include: {
+      products: {
+        include: {
+          ingredients: true,
+          variations: true,
+        }
+      }
+    }
+  })
+
   return (
     <>
       <Container className={"mt-10"}>
         <Title text={"Все пиццы"} size={"lg"} className={"font-extrabold"} />
       </Container>
-      <TopBar />
+      <TopBar categories={categories.filter(category => Boolean(category.products.length))} />
       <Container className={"mt-10 pb-14"}>
         <div className={"flex gap-[80px]"}>
           <div className={"w-[250px]"}>
@@ -20,82 +26,17 @@ export default function Home() {
           </div>
           <div className={"flex-1"}>
             <div className={"flex flex-col gap-16"}>
-              <ProductGroupList
-                title={"Пиццы"}
-                categoryId={1}
-                products={[
-                  {
-                    id: 1,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 2,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 3,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 4,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                ]}
-              />
-              <ProductGroupList
-                title={"Комбо"}
-                categoryId={2}
-                products={[
-                  {
-                    id: 1,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 2,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 3,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                  {
-                    id: 4,
-                    name: "Чизбургер-пицца",
-                    imageUrl:
-                      "https://media.dodostatic.net/image/r:292x292/11EE7D61698827EE9B8DB6D0AEC53410.avif",
-                    price: 550,
-                    items: [{ price: 550 }],
-                  },
-                ]}
-              />
+              {
+                categories.map((category) => (
+                  category.products.length && <ProductGroupList
+                    key={category.id}
+                    title={category.name}
+                    categoryId={category.id}
+                    products={category.products}
+                  />
+                ))
+              }
+
             </div>
           </div>
         </div>

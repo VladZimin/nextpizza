@@ -25,7 +25,6 @@ export const CheckboxFiltersGroup = (props: CheckboxFiltersGroupProps) => {
     className,
     defaultItems,
     onClickCheckbox,
-    defaultValues,
     name,
     selected,
     limit = 5,

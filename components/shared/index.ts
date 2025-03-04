@@ -11,3 +11,5 @@ export { RangeSlider } from "./rangeSlider";
 export { ProductCard } from "./productCard";
 export { ProductGroupList } from "./productGroupList";
 export { SearchInput } from "./searchInput";
+export { ProductImage } from "./productImage";
+export { VariantsGroup } from "./variantsGroup";
