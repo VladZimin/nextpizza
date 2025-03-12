@@ -45,8 +45,8 @@ model Product {
   ingredients Ingredient[]
   variations  ProductVariation[]
 
-  category    Category           @relation(fields: [categoryId], references: [id])
-  categoryId  Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,7 +71,7 @@ model ProductVariation {
 model Ingredient {
   id Int @id @default(autoincrement())
 
-  name     String
+  name     String @unique
   imageUrl String
   price    Int
 
@@ -85,8 +85,8 @@ model Ingredient {
 model Cart {
   id Int @id @default(autoincrement())
 
-  totalAmount Int     @default(0)
-  token       String
+  totalAmount Int    @default(0)
+  token       String @unique
 
   user      User?      @relation(fields: [userId], references: [id])
   userId    Int?       @unique
@@ -99,12 +99,12 @@ model Cart {
 model CartItem {
   id Int @id @default(autoincrement())
 
-  quantity Int    @default(0)
+  quantity Int @default(0)
 
   cart               Cart             @relation(fields: [cartId], references: [id])
-  cartId             Int              @unique
+  cartId             Int
   productVariation   ProductVariation @relation(fields: [productVariationId], references: [id])
-  productVariationId Int              @unique
+  productVariationId Int
 
   ingredients Ingredient[]
 
@@ -119,9 +119,9 @@ model Order {
   totalAmount Int
   status      OrderStatus
   paymentId   String?
-
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?  @unique
+  items       Json
+  user        User?       @relation(fields: [userId], references: [id])
+  userId      Int?
 
   fullName String
   email    String
@@ -142,8 +142,6 @@ model VerificationCode {
   code String @unique
 
   createdAt DateTime @default(now())
-
-  @@unique([userId, code])
 }
 
 enum OrderStatus {

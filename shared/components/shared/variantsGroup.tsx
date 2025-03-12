@@ -21,7 +21,10 @@ export const VariantsGroup = ({className, items, onClick, selectedValue}: Varian
       {items.map((item) => (
         <button
           key={item.name}
-          onClick={() => onClick?.(item.value)}
+          onClick={() => {
+            console.log(item.value)
+            onClick?.(item.value)
+          }}
           className={cn(
             'flex items-center justify-center cursor-pointer h-[30px] px-5 flex-1 rounded-3xl transition-all duration-400 text-sm',
             {

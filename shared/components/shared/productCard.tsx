@@ -1,8 +1,9 @@
-import { cn } from "@/shared/lib/utils";
-import Link from "next/link";
-import { Title } from "@/shared/components/shared/title";
-import { Button } from "../ui";
-import { Plus } from "lucide-react";
+import {cn} from '@/shared/lib/utils'
+import Link from 'next/link'
+import {Title} from '@/shared/components/shared/title'
+import {Button} from '../ui'
+import {Plus} from 'lucide-react'
+import {Ingredient} from '@prisma/client'
 
 interface ProductCardProps {
   className?: string;
@@ -10,10 +11,12 @@ interface ProductCardProps {
   name: string;
   price: number;
   imageUrl: string;
+  ingredients: Ingredient[]
 }
 
 export const ProductCard = (props: ProductCardProps) => {
-  const { className, id, imageUrl, price, name } = props;
+  const { className, id, imageUrl, price, name, ingredients } = props;
+
   return (
     <div className={cn("", className)}>
       <Link href={`/product/${id}`}>
@@ -22,15 +25,18 @@ export const ProductCard = (props: ProductCardProps) => {
         </div>
         <Title text={name} size="sm" className="mb-1 mt-3 font-bold" />
         <p className="text-sm text-gray-400">
-          Цыпленок, моцарелла, сыры чеддер и пармезан, сырный соус, томаты, соус
-          альфредо, чеснок
+          {
+            ingredients.map((ingredient) => ingredient.name).join(', ')
+          }
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-[20px]">
             от <b>{price} ₽</b>
           </span>
-
-          <Button variant="secondary" className="text-base font-bold">
+          <Button
+            variant="secondary"
+            className="text-base font-bold"
+          >
             <Plus className="w-5 h-5 mr-1" />
             Добавить
           </Button>

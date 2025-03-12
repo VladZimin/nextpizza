@@ -7,10 +7,11 @@ import { useIntersection } from "react-use";
 import { Title } from "@/shared/components/shared/title";
 import { ProductCard } from "@/shared/components/shared/productCard";
 import { useCategoryStore } from "@/shared/store";
+import {IProduct} from '@/@types/prisma'
 
 interface ProductGroupListProps {
   title: string;
-  products: any[];
+  products: IProduct[];
   className?: string;
   listClassName?: string;
   categoryId: number;
@@ -36,10 +37,11 @@ export const ProductGroupList = (props: ProductGroupListProps) => {
           .map((product) => (
             <ProductCard
               key={product.id}
-              id={product.id}
+              id={String(product.id)}
               name={product.name}
               imageUrl={product.imageUrl}
               price={product.variations[0].price}
+              ingredients={product.ingredients}
             />
           ))}
       </div>

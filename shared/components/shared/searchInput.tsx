@@ -57,7 +57,7 @@ export const SearchInput = ({className}: SearchInputProps) => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         {
-          products.length && (
+          products.length > 0 && (
             <div
               className={cn(
                 'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-200 invisible opacity-0 z-30',

@@ -15,9 +15,10 @@ interface ChoosePizzaFormProps {
   imageUrl: string;
   name: string;
   className?: string;
+  loading?: boolean;
   ingredients: Ingredient[];
   items: ProductVariation[];
-  onClickAddCart?: VoidFunction;
+  onSubmit: (productVariationId: number, ingredients: number[]) => void;
 }
 
 export const ChoosePizzaForm = (
@@ -26,7 +27,8 @@ export const ChoosePizzaForm = (
     items,
     imageUrl,
     ingredients,
-    onClickAddCart,
+    onSubmit,
+    loading,
     className,
   }: ChoosePizzaFormProps
 ) => {
@@ -38,7 +40,8 @@ export const ChoosePizzaForm = (
     setPizzaType,
     setSize,
     addIngredientId,
-    availablePizzasSizes
+    availablePizzasSizes,
+    productVariationId
   } = usePizzaOptions(items)
 
   const description = `${size} см, ${mapPizzaType[pizzaType]} тесто`
@@ -51,12 +54,9 @@ export const ChoosePizzaForm = (
   )
 
   const handleClickAddCart = () => {
-    onClickAddCart?.()
-    console.log({
-      size,
-      pizzaType,
-      ingredients: selectedIngredients,
-    })
+    if (productVariationId) {
+      onSubmit(productVariationId, Array.from(selectedIngredients))
+    }
   }
 
   return (
@@ -92,6 +92,7 @@ export const ChoosePizzaForm = (
           </div>
         </div>
         <Button
+          loading={loading}
           className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
           onClick={handleClickAddCart}
         >
