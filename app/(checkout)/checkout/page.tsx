@@ -11,8 +11,23 @@ import {
   Title,
 } from '@/shared/components/shared'
 import {useCart} from '@/shared/hooks'
+import {createOrder} from '@/app/actions'
+import toast from 'react-hot-toast'
+import {useEffect, useState} from 'react'
+import {Api} from '@/shared/services/api-client'
+import { useSession } from 'next-auth/react'
 
 export default function CheckoutPage() {
+  const [submitting, setSubmitting] = useState(false);
+  const session = useSession()
+  const {
+    updateItemQuantity,
+    removeCartItem,
+    totalAmount,
+    cartItems,
+    loading
+  } = useCart()
+
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
@@ -24,21 +39,44 @@ export default function CheckoutPage() {
       comment: '',
     },
   })
-  const {
-    updateItemQuantity,
-    removeCartItem,
-    totalAmount,
-    cartItems,
-    loading
-  } = useCart()
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const data = await Api.auth.getMe()
+      const [firstName, lastName] = data.fullName.split(' ')
+
+      form.setValue('firstName', firstName)
+      form.setValue('lastName', lastName)
+      form.setValue('email', data.email)
+    }
+
+    if (session) {
+      fetchUserInfo()
+    }
+  }, [session])
 
   const updateQuantity = (id: number, quantity: number, type: 'plus' | 'minus') => {
     const newQuantity = type === 'plus' ? quantity + 1 : quantity - 1
     updateItemQuantity(id, newQuantity)
   }
 
-  const onSubmit = (data: CheckoutFormValues) => {
-    console.log(data)
+  const onSubmit = async (data: CheckoutFormValues) => {
+    try {
+      setSubmitting(true)
+      const url = await createOrder(data)
+      toast.error('Заказ успешно оформлен!📝 Переход на оплату...', {
+        icon: '✅',
+      });
+      if (url) {
+        location.href = url
+      }
+    } catch (e) {
+      console.log(e)
+      setSubmitting(false)
+      toast.error('Неверный E-Mail или пароль', {
+        icon: '❌',
+      });
+    }
   }
   return (
     <Container className={'mt-10'}>
@@ -58,7 +96,7 @@ export default function CheckoutPage() {
               <CheckoutAddressFrom className={loading ? 'opacity-50 pointer-events-none' : ''} />
             </div>
             <div className={'w-[450px]'}>
-              <CheckoutSidebar totalAmount={totalAmount} loading={loading}/>
+              <CheckoutSidebar totalAmount={totalAmount} loading={loading || submitting} />
             </div>
           </div>
         </form>

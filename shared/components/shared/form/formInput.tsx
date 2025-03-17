@@ -1,3 +1,5 @@
+'use client'
+
 import {InputHTMLAttributes} from 'react'
 import { RequiredSymbol } from '../requiredSymbol';
 import { Input } from '../../ui';
@@ -11,13 +13,12 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   required?: boolean;
   className?: string;
 }
-export const FormInput = ({className, label, name, required}: Props) => {
+export const FormInput = ({className, label, name, required, ...rest}: Props) => {
   const {
     register,
     formState: { errors },
     watch,
     setValue,
-    ...rest
   } = useFormContext()
 
   const value = watch(name)

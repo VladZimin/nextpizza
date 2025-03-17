@@ -1,6 +1,7 @@
 import {create} from 'zustand'
 import {Api} from '@/shared/services/api-client'
 import {CartStateItem, getCartDetails} from '@/shared/lib/getCartDetails'
+import {CreateCartItemValues} from '@/shared/services/dto/cart.dto'
 
 export interface CartState {
   loading: boolean;
@@ -9,11 +10,11 @@ export interface CartState {
   cartItems: CartStateItem[];
   fetchCartItems: () => Promise<void>;
   updateItemQuantity: (id: number, quantity: number) => Promise<void>;
-  addCartItem: (values: any) => Promise<void>;
+  addCartItem: (values: CreateCartItemValues) => Promise<void>;
   removeCartItem: (id: number) => Promise<void>;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set) => ({
   cartItems: [],
   error: false,
   loading: true,
@@ -40,11 +41,24 @@ export const useCartStore = create<CartState>((set, get) => ({
       set({ loading: false });
     }
   },
-  addCartItem: (values: any) => Promise.resolve(),
   removeCartItem: async (id: number) => {
     try {
-      set({ loading: true });
+      set(state => ({
+        loading: true,
+        cartItems: state.cartItems.map(item => (item.id === id ? {...item, disabled: true} : item))
+      }));
       const data = await Api.cart.deleteCartItem(id)
+      set(getCartDetails(data))
+    } catch (e) {
+      console.log(e)
+    } finally {
+      set({ loading: false });
+    }
+  },
+  addCartItem: async (values: CreateCartItemValues) => {
+    try {
+      set({ loading: true });
+      const data = await Api.cart.addCartItem(values)
       set(getCartDetails(data))
     } catch (e) {
       console.log(e)

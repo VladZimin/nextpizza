@@ -1,5 +1,7 @@
+'use client'
+
 import {WhiteBlock} from '../whiteBlock'
-import {AddressInput, ErrorText, FormInput, FormTextarea} from '@/shared/components/shared'
+import {AddressInput, ErrorText, FormTextarea} from '@/shared/components/shared'
 import {Controller, useFormContext} from 'react-hook-form'
 
 interface Props {
