@@ -1,5 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {prisma} from '@/prisma/prisma-client'
+export const dynamic = 'force-dynamic'
+
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,5 +30,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/?verified', req.url))
   } catch (e) {
     console.log('[VERIFY_GET]', e)
+    return NextResponse.json({ error: 'Не удалось подтвердить аккаунт' }, { status: 500 });
   }
 }
